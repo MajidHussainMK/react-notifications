@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from "react";
 import { Notification, Props, NotificationPosition } from "./Notification";
-import { useNotificationReducer, StateInterface } from './reducer';
-import { getId, positions } from '../utils/helper';
+import { useNotificationReducer, StateInterface } from "./reducer";
+import { getId, positions } from "../utils/helper";
 
 interface INotificationContext {
   deleteNotification: (id: number, position: NotificationPosition) => void;
@@ -11,7 +11,12 @@ interface INotificationContext {
 }
 
 export interface NotificationOptions extends Props {
+  /** time in millisecond after which Notification disappears. Default to 4000 */
   delay?: number;
+
+  /** if true notification won't disappear on its own */
+  disableAutoClose?: boolean;
+
   timeoutId?: ReturnType<typeof setTimeout>;
 }
 
@@ -25,10 +30,11 @@ export const NotificationContainer: React.FC = ({ children }) => {
   const [state, dispatch] = useNotificationReducer();
 
   const getTimeoutId = (
-    delay: number | undefined,
+    delay: number,
+    disableAutoClose: boolean,
     deleteNotificationCallback: () => void
   ): ReturnType<typeof setTimeout> | undefined => {
-    if (!delay) return undefined;
+    if (disableAutoClose) return undefined;
     return setTimeout(deleteNotificationCallback, delay);
   };
 
@@ -39,18 +45,24 @@ export const NotificationContainer: React.FC = ({ children }) => {
     });
   };
 
-  const addNotification = (
-    notification: Omit<NotificationOptions, "id" | "timeoutId">
-  ) => {
-    const id = idGenerator.next().value as number;
-    const callback = () => deleteNotification(id, notification.position);
+  const addNotification = ({
+    delay = 4000,
+    position,
+    disableAutoClose = false,
+    ...rest
+  }: Omit<NotificationOptions, "id" | "timeoutId">) => {
+    const id = idGenerator.next().value;
+    const callback = () => deleteNotification(id, position);
 
     dispatch({
       type: "ADD_NOTIFICATION",
       payload: {
-        ...notification,
+        ...rest,
         id,
-        timeoutId: getTimeoutId(notification.delay, callback),
+        delay,
+        position,
+        disableAutoClose,
+        timeoutId: getTimeoutId(delay, disableAutoClose, callback),
       },
     });
   };
