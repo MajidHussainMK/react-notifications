@@ -1,77 +1,99 @@
+import { useState } from "react";
+import { NotificationPosition } from "./Notifications/Notification";
 import { useNotification } from "./Notifications/NotificationContainer";
+import { Radio as RadioButton } from "./Radio";
 
 function App() {
   const { addNotification } = useNotification();
+  const [position, setPosition] = useState<NotificationPosition>("bottom-left");
+
+  const handlePosition = (value: string) => {
+    setPosition(value as NotificationPosition);
+  };
 
   return (
-    <div>
-      <div className="flex-row ai-c">
-        <input type="radio" id="html" name="fav_language" value="HTML" />
-        <label htmlFor="html">HTML</label>
-        <br />
-        <input type="radio" id="css" name="fav_language" value="CSS" />
-        <label htmlFor="css">CSS</label>
-        <br />
-        <input
-          type="radio"
-          id="javascript"
-          name="fav_language"
-          value="JavaScript"
+    <div className="container">
+      <div className="flex-row ai-c mb-8">
+        <RadioButton
+          label="Top Right"
+          name="position"
+          value="top-right"
+          onClick={handlePosition}
         />
-        <label htmlFor="javascript">JavaScript</label>
+        <RadioButton
+          label="Top Left"
+          name="position"
+          value="top-left"
+          onClick={handlePosition}
+        />
+        <RadioButton
+          label="Bottom Right"
+          name="position"
+          value="bottom-right"
+          onClick={handlePosition}
+        />
+        <RadioButton
+          label="Bottom Left"
+          name="position"
+          value="bottom-left"
+          onClick={handlePosition}
+          defaultChecked
+        />
       </div>
-      <button
-        type="button"
-        onClick={() =>
-          addNotification({
-            title: "Success",
-            position: "top-right",
-            type: "success",
-            content: "Wow, your doing greate",
-          })
-        }
-      >
-        Success TR
-      </button>
-      <button
-        type="button"
-        onClick={() =>
-          addNotification({
-            title: "Success",
-            position: "top-left",
-            type: "error",
-            content: "Wow, your doing greate",
-          })
-        }
-      >
-        Error TL
-      </button>
-      <button
-        type="button"
-        onClick={() =>
-          addNotification({
-            title: "Success",
-            position: "bottom-right",
-            type: "warning",
-            content: "Wow, your doing greate",
-          })
-        }
-      >
-        Warning BR
-      </button>
-      <button
-        type="button"
-        onClick={() =>
-          addNotification({
-            title: "Success",
-            position: "bottom-left",
-            type: "info",
-            content: "Wow, your doing greate",
-          })
-        }
-      >
-        Info BL
-      </button>
+      <div className="flex-row ai-c jc-c">
+        <button
+          type="button"
+          onClick={() =>
+            addNotification({
+              title: "Success",
+              type: "success",
+              content: "Wow, your doing great",
+              position,
+            })
+          }
+        >
+          Success TR
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            addNotification({
+              title: "Success",
+              type: "error",
+              content: "Wow, your doing great",
+              position,
+            })
+          }
+        >
+          Error TL
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            addNotification({
+              title: "Success",
+              type: "warning",
+              content: "Wow, your doing great",
+              position,
+            })
+          }
+        >
+          Warning BR
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            addNotification({
+              title: "Success",
+              type: "info",
+              content: "Wow, your doing great",
+              position,
+            })
+          }
+        >
+          Info BL
+        </button>
+      </div>
     </div>
   );
 }
