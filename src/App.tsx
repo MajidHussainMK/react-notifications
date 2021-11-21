@@ -78,6 +78,7 @@ function App() {
         <input
           type="number"
           value={delay}
+          style={{ marginLeft: 8 }}
           onChange={({ target }) => setDelay(+target.value)}
         />
         <Radio
