@@ -3,7 +3,7 @@ import { NotificationContext } from "./NotificationContainer";
 import { useTransition, animated } from "react-spring";
 import { Icon } from "../Icons";
 
-type NotificationType = "success" | "error" | "warning" | "info";
+export type NotificationType = "success" | "error" | "warning" | "info";
 
 export type NotificationPosition =
   | "top-right"
@@ -107,7 +107,7 @@ const containerStyle = (
     border: "1px solid #ccd2d6",
     borderRadius: 2,
     borderLeft: `4px solid ${getColor(type)}`,
-    filter: "drop-shadow(0px 3px 6px #000)",
+    filter: `drop-shadow(0px 3px 6px ${getColor(type)})`,
     ...getPositionStyle(position),
   };
 };
