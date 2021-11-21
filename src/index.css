@@ -40,3 +40,14 @@ code {
 .mb-16 {
   margin-bottom: 16px;
 }
+
+.heading {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 2;
+}
+
+button {
+  cursor: pointer;
+  padding: 8px;
+}

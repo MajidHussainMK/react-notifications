@@ -10,8 +10,8 @@ export function* getId(): Generator<number> {
 }
 
 export const positions: Record<string, NotificationPosition> = {
-  topRight: "top-right",
   topLeft: "top-left",
+  topRight: "top-right",
   bottomRight: "bottom-right",
   bottomLeft: "bottom-left",
 };

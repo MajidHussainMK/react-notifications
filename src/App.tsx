@@ -1,97 +1,117 @@
 import { useState } from "react";
-import { NotificationPosition } from "./Notifications/Notification";
+import {
+  NotificationPosition,
+  NotificationType,
+} from "./Notifications/Notification";
 import { useNotification } from "./Notifications/NotificationContainer";
-import { Radio as RadioButton } from "./Radio";
+import { Radio, Radio as RadioButton } from "./Radio";
+import { positions } from "./utils/helper";
+
+const types = ["Success", "Info", "Warning", "Error"] as const;
 
 function App() {
   const { addNotification } = useNotification();
-  const [position, setPosition] = useState<NotificationPosition>("bottom-left");
+  const [position, setPosition] = useState<NotificationPosition>("top-right");
+  const [type, setType] = useState<NotificationType>("success");
+  const [disableAutoClose, setAutoClose] = useState("");
+  const [delay, setDelay] = useState(4000);
 
   const handlePosition = (value: string) => {
     setPosition(value as NotificationPosition);
   };
 
-  return (
-    <div className="container">
+  const handleType = (value: string) => {
+    setType(value as NotificationType);
+  };
+
+  const handleAutoClose = () => {
+    setAutoClose(disableAutoClose ? "" : "true");
+  };
+
+  const positionContent = (
+    <>
+      <span className="heading">Position</span>
       <div className="flex-row ai-c mb-8">
-        <RadioButton
-          label="Top Right"
-          name="position"
-          value="top-right"
-          onClick={handlePosition}
+        {Object.values(positions).map((p) => {
+          const label = p.split("-").join(" ");
+          return (
+            <RadioButton
+              key={p}
+              value={p}
+              label={label}
+              name="position"
+              onClick={handlePosition}
+              defaultChecked={p === "top-right"}
+            />
+          );
+        })}
+      </div>
+    </>
+  );
+
+  const typeContent = (
+    <>
+      <span className="heading">Type</span>
+      <div className="flex-row ai-c mb-8">
+        {types.map((type) => {
+          const value = type.toLocaleLowerCase() as NotificationType;
+          return (
+            <RadioButton
+              key={value}
+              label={type}
+              name="type"
+              value={value}
+              onClick={handleType}
+              defaultChecked={value === "success"}
+            />
+          );
+        })}
+      </div>
+    </>
+  );
+
+  const optionsContent = (
+    <>
+      <span className="heading">Options</span>
+      <div className="flex-row ai-c mb-8">
+        <label>Delay</label>
+        <input
+          type="number"
+          value={delay}
+          onChange={({ target }) => setDelay(+target.value)}
         />
-        <RadioButton
-          label="Top Left"
-          name="position"
-          value="top-left"
-          onClick={handlePosition}
-        />
-        <RadioButton
-          label="Bottom Right"
-          name="position"
-          value="bottom-right"
-          onClick={handlePosition}
-        />
-        <RadioButton
-          label="Bottom Left"
-          name="position"
-          value="bottom-left"
-          onClick={handlePosition}
-          defaultChecked
+        <Radio
+          id="disable-auto-close"
+          label="Disable Auto Close"
+          name="disableAutoClose"
+          value={disableAutoClose}
+          onClick={handleAutoClose}
+          type="checkbox"
         />
       </div>
-      <div className="flex-row ai-c jc-c">
+    </>
+  );
+
+  return (
+    <div className="container">
+      {positionContent}
+      {typeContent}
+      {optionsContent}
+      <div className="flex-row jc-c">
         <button
           type="button"
           onClick={() =>
             addNotification({
-              title: "Success",
-              type: "success",
-              content: "Wow, your doing great",
+              type,
+              delay,
               position,
+              title: "Hola!",
+              content: "Wow, it's so easy",
+              disableAutoClose: Boolean(disableAutoClose),
             })
           }
         >
-          Success TR
-        </button>
-        <button
-          type="button"
-          onClick={() =>
-            addNotification({
-              title: "Success",
-              type: "error",
-              content: "Wow, your doing great",
-              position,
-            })
-          }
-        >
-          Error TL
-        </button>
-        <button
-          type="button"
-          onClick={() =>
-            addNotification({
-              title: "Success",
-              type: "warning",
-              content: "Wow, your doing great",
-              position,
-            })
-          }
-        >
-          Warning BR
-        </button>
-        <button
-          type="button"
-          onClick={() =>
-            addNotification({
-              title: "Success",
-              type: "info",
-              content: "Wow, your doing great",
-              position,
-            })
-          }
-        >
-          Info BL
+          Show Notification
         </button>
       </div>
     </div>
