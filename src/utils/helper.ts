@@ -1,6 +1,6 @@
 import { NotificationPosition } from "../Notifications/Notification";
 
-export function* getId() {
+export function* getId(): Generator<number> {
   let id = 1;
 
   while (true) {
