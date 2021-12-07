@@ -6,9 +6,41 @@ import { getId, positions } from "../utils/helper";
 interface INotificationContext {
   deleteNotification: (id: number, position: NotificationPosition) => void;
   addNotification: (
-    notification: Omit<NotificationOptions, "id" | "timeoutId">
+    notification: Omit<
+      NotificationOptions,
+      "id" | "timeoutId" | "pause" | "resume"
+    >
   ) => void;
 }
+
+let Timer = function (
+  callback: () => void,
+  delay: number
+): { pause: () => void; resume: () => void } {
+  let timerId: ReturnType<typeof setTimeout>,
+    start: number,
+    remaining = delay;
+
+  let pause = function () {
+    clearTimeout(timerId);
+    console.log(remaining, 'r1')
+    console.log(Date.now(), 'now')
+    console.log(start, 'start')
+    remaining -= Date.now() - start;
+    console.log(remaining, '-rrr')
+  };
+
+  let resume = function () {
+    start = Date.now();
+    clearTimeout(timerId);
+    // console.log(remaining)
+    timerId = setTimeout(callback, remaining);
+  };
+
+  resume();
+
+  return { pause, resume };
+};
 
 export interface NotificationOptions extends Props {
   /** time in millisecond after which Notification disappears. Default to 4000 */
@@ -50,10 +82,11 @@ export const NotificationContainer: React.FC = ({ children }) => {
     position,
     disableAutoClose = false,
     ...rest
-  }: Omit<NotificationOptions, "id" | "timeoutId">) => {
+  }: Omit<NotificationOptions, "id" | "timeoutId" | "pause" | "resume">) => {
     const id = idGenerator.next().value;
     const callback = () => deleteNotification(id, position);
 
+    const { pause, resume } = Timer(callback, delay);
     dispatch({
       type: "ADD_NOTIFICATION",
       payload: {
@@ -62,7 +95,10 @@ export const NotificationContainer: React.FC = ({ children }) => {
         delay,
         position,
         disableAutoClose,
-        timeoutId: getTimeoutId(delay, disableAutoClose, callback),
+        pause,
+        resume,
+        // timeoutId: getTimeoutId(delay, disableAutoClose, callback),
+        // timeoutId: Timer(callback, delay),
       },
     });
   };

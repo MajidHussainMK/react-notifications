@@ -26,7 +26,10 @@ export const Notification: React.FC<{
 
   /** position where notification is gonna slide in */
   position: NotificationPosition;
-}> = ({ id, type, title, content, position }) => {
+
+  pause: () => void;
+  resume: () => void;
+}> = ({ id, type, title, content, position, pause, resume }) => {
   const { deleteNotification } = useContext(NotificationContext);
 
   const getXCordinate = () => {
@@ -41,7 +44,11 @@ export const Notification: React.FC<{
   });
 
   const toast = (
-    <div style={containerStyle(type, position)}>
+    <div
+      style={containerStyle(type, position)}
+      onMouseEnter={pause}
+      onMouseLeave={resume}
+    >
       <div className="flex-row ai-c">
         <Icon name={type} style={iconStyle(type)} />
         <div style={titleStyle()}>{title}</div>
